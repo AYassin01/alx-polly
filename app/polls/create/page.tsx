@@ -8,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type PollOption = {
   id: string;
@@ -18,6 +19,7 @@ type FormValues = {
   title: string;
   description: string;
   options: PollOption[];
+  expiresAt?: string;
 };
 
 export default function CreatePollPage() {
@@ -33,6 +35,7 @@ export default function CreatePollPage() {
       title: '',
       description: '',
       options: options,
+      expiresAt: '',
     },
   });
 
@@ -72,12 +75,18 @@ export default function CreatePollPage() {
     // This is a placeholder for the actual API call
     console.log('Poll data:', formData);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // Redirect to polls page after successful creation
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Show success message or redirect
       router.push('/polls');
-    }, 1500);
+    } catch (error) {
+      console.error('Error creating poll:', error);
+      // Handle error (could add error state and display message)
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -120,6 +129,20 @@ export default function CreatePollPage() {
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter poll description" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="expiresAt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expiration Date (Optional)</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 // Mock user data - in a real app, this would come from your auth provider
 const mockUser = {
@@ -51,6 +52,7 @@ export function Navbar() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           {mockUser.isLoggedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
