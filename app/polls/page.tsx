@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * Polls Page Component
+ * 
+ * This page displays a list of all available polls with options to create new polls.
+ * It includes loading states, empty state handling, and responsive grid layout.
+ */
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PollCard } from '@/components/poll-card';
@@ -7,7 +14,12 @@ import { PollCardSkeleton } from '@/components/poll-card-skeleton';
 import { Poll } from '@/types';
 import { useState, useEffect } from 'react';
 
-// Mock data for polls
+/**
+ * Mock data for polls
+ * 
+ * This data simulates polls that would normally be fetched from a database.
+ * Each poll contains information about the poll question, options, votes, creator, and dates.
+ */
 const mockPolls: Poll[] = [
   {
     id: '1',
@@ -40,16 +52,30 @@ const mockPolls: Poll[] = [
   },
 ];
 
+/**
+ * PollsPage Component
+ * 
+ * Main component for displaying all available polls.
+ * Handles data fetching, loading states, and rendering of poll cards.
+ * 
+ * @returns React component that displays the polls listing page
+ */
 export default function PollsPage() {
+  // State for storing the list of polls
   const [polls, setPolls] = useState<Poll[]>([]);
+  
+  // State for tracking loading status
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call with a delay
+    /**
+     * Fetches polls data from the server
+     * In this implementation, it simulates an API call with mock data and delay
+     */
     const fetchPolls = async () => {
       setLoading(true);
       try {
-        // In a real app, this would be an API call
+        // In a real app, this would be an API call to fetch polls from the database
         await new Promise(resolve => setTimeout(resolve, 1500));
         setPolls(mockPolls);
       } catch (error) {
@@ -64,6 +90,7 @@ export default function PollsPage() {
 
   return (
     <div className="container mx-auto py-8">
+      {/* Header section with title and create button */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">All Polls</h1>
         <Link href="/polls/create">
@@ -71,6 +98,7 @@ export default function PollsPage() {
         </Link>
       </div>
 
+      {/* Responsive grid layout for poll cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
           // Show skeleton loaders while loading
@@ -83,7 +111,7 @@ export default function PollsPage() {
             <PollCard key={poll.id} poll={poll} />
           ))
         ) : (
-          // Show message when no polls are available
+          // Show empty state message when no polls are available
           <div className="col-span-full text-center py-10">
             <h3 className="text-xl font-medium mb-2">No polls available</h3>
             <p className="text-muted-foreground mb-4">Create a new poll to get started!</p>

@@ -1,5 +1,14 @@
 'use client';
 
+/**
+ * Login Page Component
+ * 
+ * This component renders a login form that allows users to authenticate with their email and password.
+ * It handles form validation, submission, error handling, and redirects users upon successful login.
+ * 
+ * The form uses Zod schema validation through react-hook-form to ensure valid input before submission.
+ */
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,10 +18,26 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { loginSchema, type LoginFormValues } from '@/lib/validations/auth';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/use-toast';
 
+/**
+ * LoginPage component that renders the login form and handles authentication
+ * 
+ * @returns {JSX.Element} The login page component
+ */
 export default function LoginPage() {
+  // State to track form submission status
   const [isLoading, setIsLoading] = useState(false);
+  // Initialize Supabase client for authentication
+  const supabase = createSupabaseBrowserClient();
+  // Router for navigation after successful login
+  const router = useRouter();
+  // Toast notifications for error messages
+  const { toast } = useToast();
 
+  // Initialize form with Zod schema validation
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -21,13 +46,31 @@ export default function LoginPage() {
     },
   });
 
+  /**
+   * Handle form submission
+   * Attempts to authenticate the user with Supabase
+   * 
+   * @param {LoginFormValues} data - The validated form data
+   */
   const onSubmit = async (data: LoginFormValues) => {
+    // Set loading state to show UI feedback
     setIsLoading(true);
-    // This is a placeholder for the actual authentication logic
-    console.log('Login data:', data);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    // Attempt to sign in with email and password
+    const { error } = await supabase.auth.signInWithPassword(data);
+
+    if (error) {
+      // Show error message if authentication fails
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } else {
+      // Redirect to polls page on successful login
+      router.push('/polls');
+    }
+    // Reset loading state regardless of outcome
+    setIsLoading(false);
   };
 
   return (
